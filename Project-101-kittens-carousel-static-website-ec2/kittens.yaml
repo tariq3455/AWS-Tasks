@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  This template launches an EC2 with a security group that enables SSHconnection.
+
+Resources:
+  tariqEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-02e136e904f3da870
+      InstanceType: t2.micro
+      KeyName: firstkey
+      SecurityGroups:
+        - firstsecuregroup
+      Tags:
+        - Key: Name
+          Value: static-web
+        - Key: Department
+          Value: Development
+      UserData:
+         Fn::Base64:
+            !Sub |
+              #!/bin/bash -xe
+              yum -y update
+              sudo yum install -y httpd
+              sudo systemctl enable httpd
+              sudo systemctl start httpd
+              sudo echo '<h1>Hello from ${AWS::Region}</h1>' > /var/www/html/index.html
